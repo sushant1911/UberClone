@@ -7,7 +7,7 @@ FIrebase: https://goo.gl/9Wahb1
 geofire: https://goo.gl/SYXc2b
 Glide: https://github.com/bumptech/glide
 Place Autocomplete: https://developers.google.com/places/android-api/autocomplete
-Google-Directions-Android: :https://github.com/jd-alexander/google-directions-android
+
 </pre>
 <pre>
 <b>Implementation Guide</b>
