@@ -1,122 +1,63 @@
-package com.example.user.uberclone;
+package com.example.alquilarcoche;
+
+import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.media.MediaPlayer;
-import android.net.Uri;
-import android.support.annotation.NonNull;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ProgressBar;
-import android.widget.Toast;
-import android.widget.VideoView;
+import android.widget.Spinner;
 
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
-import com.google.android.gms.tasks.TaskExecutors;
-import com.google.firebase.FirebaseException;
-import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.PhoneAuthCredential;
-import com.google.firebase.auth.PhoneAuthProvider;
-
-import java.util.concurrent.TimeUnit;
 
 public class OtpActivity extends AppCompatActivity {
-    private String verificationid;
-    private FirebaseAuth mAuth;
-    private ProgressBar progressBar;
-    private EditText editText;
 
+    private Spinner spinner;
+    private EditText editText;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_otp);
-        mAuth = FirebaseAuth.getInstance();
+        spinner = findViewById(R.id.spinnerCountries);
+        spinner.setAdapter(new ArrayAdapter<String>(this, android.R.layout.simple_spinner_dropdown_item, CountryData.countryNames));
 
-        progressBar = findViewById(R.id.progressbar);
-        editText = findViewById(R.id.editTextCode);
+        editText = findViewById(R.id.editTextPhone);
 
-        String phonenumber = getIntent().getStringExtra("phonenumber");
-        sendVerificationCode(phonenumber);
-
-        findViewById(R.id.buttonSignIn).setOnClickListener(new View.OnClickListener() {
+        findViewById(R.id.buttonContinue).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                String code = CountryData.countryAreaCodes[spinner.getSelectedItemPosition()];
 
-                String code = editText.getText().toString().trim();
+                String number = editText.getText().toString().trim();
 
-                if ((code.isEmpty() || code.length() < 6)){
-
-                    editText.setError("Enter code...");
+                if (number.isEmpty() || number.length() < 10) {
+                    editText.setError("Valid number is required");
                     editText.requestFocus();
                     return;
                 }
-                verifyCode(code);
+
+                String phonenumber = "+" + code + number;
+
+                Intent intent = new Intent(OtpActivity.this, ValidatinofOtp.class);
+                intent.putExtra("phonenumber", phonenumber);
+                startActivity(intent);
 
             }
         });
+
     }
 
-    private void verifyCode(String code){
-        PhoneAuthCredential credential = PhoneAuthProvider.getCredential(verificationid, code);
-        signInWithCredential(credential);
-    }
+    @Override
+    protected void onStart() {
+        super.onStart();
 
-    private void signInWithCredential(PhoneAuthCredential credential) {
-        mAuth.signInWithCredential(credential)
-                .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
-                    @Override
-                    public void onComplete(@NonNull Task<AuthResult> task) {
-                        if (task.isSuccessful()) {
+        if (FirebaseAuth.getInstance().getCurrentUser() != null) {
+            Intent intent = new Intent(this, MainActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
 
-                            Intent intent = new Intent(OtpActivity.this, RegisterActivity.class);
-                            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-
-                            startActivity(intent);
-
-                        } else {
-                            Toast.makeText(OtpActivity.this, task.getException().getMessage(), Toast.LENGTH_LONG).show();
-                        }
-                    }
-
-                });
-    }
-
-    private void sendVerificationCode(String number){
-
-        PhoneAuthProvider.getInstance().verifyPhoneNumber(
-                number,
-                60,
-                TimeUnit.SECONDS,
-                TaskExecutors.MAIN_THREAD,
-                mCallBack
-        );
-    }
-
-    private PhoneAuthProvider.OnVerificationStateChangedCallbacks
-            mCallBack = new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
-
-        @Override
-        public void onCodeSent(String s, PhoneAuthProvider.ForceResendingToken forceResendingToken) {
-            super.onCodeSent(s, forceResendingToken);
-            verificationid = s;
+            startActivity(intent);
         }
-
-        @Override
-        public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
-            String code = phoneAuthCredential.getSmsCode();
-            if (code != null){
-                progressBar.setVisibility(View.VISIBLE);
-                verifyCode(code);
-            }
-        }
-
-        @Override
-        public void onVerificationFailed(FirebaseException e) {
-            Toast.makeText(OtpActivity.this, e.getMessage(),Toast.LENGTH_LONG).show();
-
-        }
-    };
+    }
 }
+
