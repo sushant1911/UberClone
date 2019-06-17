@@ -1,5 +1,9 @@
 # UberClone
 this app is working similar to uber app
+when you open yur app it will ask for registration and login
+if you are old user just log in if new user then create account  using  mobile nummber number (facebook or gmail in extension i ll add)
+then select your pic up and drop location and start ride.
+acctully i  m using firebase and Google API to handel all the thing  like login register i m using firebase and for search place ,distance,time to cover those distance i m using Gooogle API link s below for pament i m using paypal payment layout
 important links
 
 <pre>
