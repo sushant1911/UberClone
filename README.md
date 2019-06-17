@@ -3,10 +3,10 @@ this app is working similar to uber app
 important links
 
 <pre>
-FIrebase: https://goo.gl/9Wahb1
-geofire: https://goo.gl/SYXc2b
-Glide: https://github.com/bumptech/glide
+FIrebase:https://firebase.google.com/docs/android/setup/
+geofire: https://firebaseopensource.com/projects/firebase/geofire-java/
 Place Autocomplete: https://developers.google.com/places/android-api/autocomplete
+goolge map api:https://console.cloud.google.com/apis/library?project=calm-edge-240219&pli=1
 
 </pre>
 <pre>
